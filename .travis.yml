@@ -2,17 +2,22 @@ sudo: false
 language: node_js
 cache:
   directories:
-    - node_modules
+  - node_modules
 notifications:
   email: false
 node_js:
-  - '4'
+- '4'
 before_install:
-  - npm i -g npm@^2.0.0
+- npm i -g npm@^2.0.0
 before_script:
-  - npm prune
+- npm prune
 after_success:
-  - npm run semantic-release
+- npm run semantic-release
 branches:
   only:
-    - master
+  - master
+deploy:
+  provider: npm
+  email: mintuhouse@gmail.com
+  api_key:
+    secure: 0BHrY27gXT+uJVPWMQrU5vOZ+iIFYR0NMnLxyJI0kF+NbqLjYI32fP7DpdeUIE/vd+FhUwgAq6eEzVKAXTjP8irXrxAuL/l7dxIvQ50u31UPa0FnDkMomJuzC+s121fxWbGzJqEgMBKvkOuL/v0+GiutYIFUkox5P7o1VJ1ULs9jvaNH8EobZjJU2Sd5ny9yPFK4FtObDiQ45Dk1bG76f5ziZoXGiGUNFqJQWgYkMY7r7UN4L40vmYMG6s3V5GJsmieXuE0oYkywVEmueEXo8CfUoaoNbuSGRIpHcG0WL8qEce0D9hAzBiyg2rUXMOa/znW53vn3QwubyLw5JTKXQ0C3X3JACqAbYKJaEyUY+9GspMfbtoK/DJJz09Ghh4Dgs/1bKan6aW7NFuQwt1oC+uRZXIi4CEqVEH/B2DkdYEL4zkfSjLjr2CHLX9YZyKP6Bi4W3tXiKAsefFcMA4wWNlOIxEpudCJu70NNKpD/XFHM7ReDy2mFlldKTgBkECtkzGutFpvZwYW6CFGpJx+j/JzPtbDBno39OQI0gXXWM70ZwzzB5OTuaTAC7JapW9H0g6JRdZ4mZtDwX07XhQp8j8C1c2cU9B9P5cJdF62B06mz3BPnT1ZPpw/EhYhh8h0drC8oL1V5UiulZ5v3Tw4wFa1Emic+46T2z5nI2RPIL/M=

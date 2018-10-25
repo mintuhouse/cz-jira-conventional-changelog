@@ -59,11 +59,23 @@ module.exports = function (options) {
           type: 'input',
           name: 'scope',
           message: 'What is the scope of this change (e.g. component or file name)? (press enter to skip)\n',
-          default: options.defaultScope
+          default: options.defaultScope 
+        }, {
+          type: 'input',
+          name: 'issues',
+          message: 'Add comma separated JIRA issue ID(s) (e.g. "AUTH-18", "CA-001, ABC-12") (required)\n',
+          validate: function(input) {
+            if (!input) {
+              return 'Must specify issue IDs, otherwise, just use a normal commit message';
+            } else {
+              return true;
+            }
+          },
+          default: options.defaultIssues 
         }, {
           type: 'input',
           name: 'subject',
-          message: 'Write a short, imperative tense description of the change:\n',
+          message: 'Write a short (< ~80 characters), imperative, present tense description of the change ("change" not "changed" nor "changes"):\n',
           default: options.defaultSubject
         }, {
           type: 'input',
@@ -83,18 +95,10 @@ module.exports = function (options) {
             return answers.isBreaking;
           }
         }, {
-          type: 'confirm',
-          name: 'isIssueAffected',
-          message: 'Does this change affect any open issues?',
-          default: options.defaultIssues ? true : false
-        }, {
           type: 'input',
-          name: 'issues',
-          message: 'Add issue references (e.g. "fix #123", "re #123".):\n',
-          when: function(answers) {
-            return answers.isIssueAffected;
-          },
-          default: options.defaultIssues ? options.defaultIssues : undefined
+          name: 'subdomain',
+          message: 'Your JIRA subdomain (would not link the issue if skipped): ',
+          default: options.defaultSubdomain
         }
       ]).then(function(answers) {
 
@@ -111,8 +115,13 @@ module.exports = function (options) {
         var scope = answers.scope.trim();
         scope = scope ? '(' + answers.scope.trim() + ')' : '';
 
+        var issues = answers.issues.split(',').map(function(x) { return x.trim(); })
+        var issueLinks = issues.map(function(issue){
+          return answers.subdomain ? '[' + issue + '](https://'+answers.subdomain+'.atlassian.net/browse/' + issue + ')' : issue;
+        }).join('\n');
+
         // Hard limit this line
-        var head = (answers.type + scope + ': ' + answers.subject.trim()).slice(0, maxLineWidth);
+        var head = (answers.type + scope + ': ' + issues.join(' ') + ' ' + answers.subject.trim()).slice(0, maxLineWidth);
 
         // Wrap these lines at 100 characters
         var body = wrap(answers.body, wrapOptions);
@@ -122,9 +131,7 @@ module.exports = function (options) {
         breaking = breaking ? 'BREAKING CHANGE: ' + breaking.replace(/^BREAKING CHANGE: /, '') : '';
         breaking = wrap(breaking, wrapOptions);
 
-        var issues = answers.issues ? wrap(answers.issues, wrapOptions) : '';
-
-        var footer = filter([ breaking, issues ]).join('\n\n');
+        var footer = filter([ breaking, issueLinks ]).join('\n\n');
 
         commit(head + '\n\n' + body + '\n\n' + footer);
       });

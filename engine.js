@@ -115,9 +115,9 @@ module.exports = function (options) {
         var scope = answers.scope.trim();
         scope = scope ? '(' + answers.scope.trim() + ')' : '';
 
-        var issues = answers.issues.split(',').map(function(x) { return x.trim(); })
+        var issues = answers.issues.split(/[\s,]+/).map(function(x) { return x.trim(); })
         var issueLinks = issues.map(function(issue){
-          return answers.subdomain ? '[' + issue + '](https://'+answers.subdomain+'.atlassian.net/browse/' + issue + ')' : issue;
+          return answers.subdomain ? '[' + issue + '](https://'+answers.subdomain+'.atlassian.net/browse/' + issue + ')' : '';
         }).join('\n');
 
         // Hard limit this line
